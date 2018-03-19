@@ -1,0 +1,40 @@
+<html>
+    <head>
+        <title>Lots</title>
+        <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+    </head>
+    <body>
+
+	<div class="pagination">
+ 			
+		<ul>
+		{% for lot in posts %}
+                <li>{{lot.title}}</li>
+                	{{lot.start_date}}  Status: {{lot.status}}
+            	{% endfor %}
+		</ul>	
+		
+    		{% if posts.has_previous %}
+        		<a href="?page={{ posts.previous_page_number }}">Previous</a>
+    		{% endif %}
+
+ 
+    		{% for num in posts.paginator.page_range %}
+        		{% if num == posts.number %}
+            			<span class="current"><b>{{ num }}</b></span>
+        		{% else %}
+            			<a href="?page={{ num }}"> {{ num }}</a>
+        		{% endif %}
+    		{% endfor %}
+ 
+    		{% if posts.has_next %}
+        		<a href="?page={{ posts.next_page_number }}">Next</a>
+    		{% endif %} 
+ 
+</div>	
+
+	
+    </div>
+    </body>
+</html>

@@ -1,0 +1,9 @@
+{% extends 'auction_site/lot_detail.html' %}
+
+{% block content %}
+    <h1></h1>
+    <form method="POST" class="post-form">{% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="save btn btn-default">Save</button>
+    </form>
+{% endblock %}

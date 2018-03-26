@@ -1,0 +1,11 @@
+{% extends 'lots.html' %}
+
+{% blosk login %}
+    <div class="register">
+        <form action="/register/" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input class="button" type="submit" value="Зарегистрироваться">
+        </form>
+    </div>
+{% endblock %}

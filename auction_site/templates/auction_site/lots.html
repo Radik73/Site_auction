@@ -4,15 +4,32 @@
         <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
     </head>
+
     <body>
+	{% block login %}
+
+	{% endblock %}
+	<div class="top-bar">
+		<ul><div class="label round secondary"><a href="/registration/">Регистрация</a></div></ul>
+		<section class="top-bar-section">
+			<ul class="right">
+				{% if username %}
+					<a href="/auth/logout/">Выйти ({{ username }})</a>
+				{% else %}
+					<a href="/auth/login/">Войти</a>
+				{% endif %}
+			</ul>
+		</section>
+	</div>
+
 
 	<div class="pagination">
  			
 		<ul>
 		{% for lot in posts %}
-                <li>{{lot.title}}</li>
-                	{{lot.start_date}}  Status: {{lot.status}}
-            	{% endfor %}
+                <caption><a href="{% url 'lot_detail' pk=lot.pk %}">{{lot.title}}</a></caption>
+                	{{lot.start_date}}  Status: {{lot.status}}<br>
+        {% endfor %}
 		</ul>	
 		
     		{% if posts.has_previous %}
@@ -32,9 +49,6 @@
         		<a href="?page={{ posts.next_page_number }}">Next</a>
     		{% endif %} 
  
-</div>	
-
-	
-    </div>
+</div>
     </body>
 </html>

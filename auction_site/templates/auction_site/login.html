@@ -1,0 +1,16 @@
+{% extends 'auction_site/lots.html' %}
+{% block login %}
+<div class="login">
+    <form action="auth/login/" method="post">
+        {% csrf_token %}
+        <label for="username">Имя пользователя</label><br>
+        <input type = "text" name="username" id="username"><br>
+        <label for="password">Пароль</label><br>
+        <input type = "password" name="password" id="password"><br>
+        {% if login_error %}
+            <label class="error">{{ login_error }}</label><br>
+        {% endif %}
+        <input class="button" type="submit" value="Войти">
+    </form>
+</div>
+{% endblock %}

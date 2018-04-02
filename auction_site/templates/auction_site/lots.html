@@ -6,22 +6,21 @@
     </head>
 
     <body>
-	{% block login %}
-
-	{% endblock %}
 	<div class="top-bar">
 		<ul><div class="label round secondary"><a href="/registration/">Регистрация</a></div></ul>
 		<section class="top-bar-section">
 			<ul class="right">
 				{% if username %}
-					<a href="/auth/logout/">Выйти ({{ username }})</a>
+					<a href="/logout/">Выйти ({{ username }})</a>
 				{% else %}
-					<a href="/auth/login/">Войти</a>
+					<a href="/login/">Войти</a>
 				{% endif %}
 			</ul>
 		</section>
 	</div>
+	{% block login %}
 
+	{% endblock %}
 
 	<div class="pagination">
  			

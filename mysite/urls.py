@@ -21,6 +21,6 @@ from auction_site import urls as auction_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('auth/', include(auction_urls)),
+    # path('auth/', include(auction_urls)),
     path('', include(auction_urls)),
 ]

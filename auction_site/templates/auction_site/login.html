@@ -1,7 +1,7 @@
 {% extends 'auction_site/lots.html' %}
 {% block login %}
 <div class="login">
-    <form action="auth/login/" method="post">
+    <form action="/login/" method="post">
         {% csrf_token %}
         <label for="username">Имя пользователя</label><br>
         <input type = "text" name="username" id="username"><br>

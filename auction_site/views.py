@@ -3,9 +3,7 @@ from django.utils import timezone
 from django.shortcuts import render_to_response
 from django.shortcuts import render
 from django.contrib import auth
-# from django.core.context_processors import csrf
-from django.contrib.auth.forms import UserCreationForm
-from .models import Lot, Rate, User
+from .models import Lot, Rate, UserProfile
 from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .forms import RateForm
@@ -37,34 +35,69 @@ from .forms import RateForm
 
 
 def make_rate(request, pk):
-    if request.method == "POST" and ("pause {}".format(str(pk)) not in request.session):
-        lot_object = get_object_or_404(Lot, pk=pk)
-        form = RateForm(request.POST or None)
-        if form.is_valid():
-            sum_rate = request.POST.get('sum_rate', '')
-            if max_rate(pk, sum_rate):
+    lot_object = get_object_or_404(Lot, pk=pk)
+    rate_object = Rate.objects.filter(lot__pk=pk)
+    form = RateForm(request.POST or None)
+    if form.is_valid():
+        sum_rate = request.POST.get('sum_rate', '')
+        if max_rate(rate_object, sum_rate):
+            if chek_rate_time(rate_object, request.user) and lot_object == get_object_or_404(Lot, pk=pk):
                 rate = form.save(commit=False)
                 rate.time_rate = timezone.now()
-                #rate.user = auth.get_user(request).username
+                rate.user = request.user
                 rate.lot = lot_object
-                rate.save()
-                request.session.set_expiry(30)
-                request.session["pause {}".format(str(pk))] = True
-                return redirect('/lots')
+                that_user = get_object_or_404(UserProfile, user = request.user)
+                if that_user.bank_book >= int(sum_rate):
+                    that_user.bank_book = that_user.bank_book - int(sum_rate)
+                    print(that_user.bank_book)
+                    that_user.save()
+                    rate.save()
+                    return redirect('/lots')
+                else:
+                    return HttpResponse('У вас недостаточно средств на счёте.')
             else:
-                return HttpResponse('Ваша ставка ниже уже существующей!')
+                return HttpResponse('Прошло слишком мало времени с момента вашей последней ставки.'
+                                    ' Попробуйте сделать ставку позднее')
+        else:
+            return HttpResponse('Ваша ставка ниже уже существующей!')
     else:
         form = RateForm()
-    return render(request, 'auction_site/make_rate.html', {'form': form})
+        return render(request, 'auction_site/make_rate.html', {'form': form})
 
 
-def max_rate(pk, sum_rate):
-    rate = Rate.objects.filter(lot__pk=pk)
+def chek_rate_time(rate, user):
+    time_rate_list = []
+    timeout = 30.0
     for i in rate:
-        if int(i.sum_rate) >= int(sum_rate):
-            return False
-        else:
+        if i.user == user:
+            result_time = timezone.now() - i.time_rate
+            time_rate_list.append(float(result_time.total_seconds()))
+    print(time_rate_list)
+    if time_rate_list != []:
+        index = len(time_rate_list) - 1
+        if time_rate_list[index] > timeout:
             return True
+        else:
+            return False
+    else:
+        return True
+
+
+
+def max_rate(rate, new_rate):
+    max = int()
+    for i in rate:
+        if int(i.sum_rate) > int(new_rate):
+            max = int(i.sum_rate)
+        elif int(new_rate) > int(i.sum_rate):
+            max = int(new_rate)
+        elif int(i.sum_rate) == int(new_rate):
+            max = 0
+    if max != int(new_rate):
+        return False
+    else:
+        return True
+
 
 def login(request):
     args = {}
@@ -75,9 +108,11 @@ def login(request):
         if user is not None:
             auth.login(request, user)
             return redirect('/lots')
+        else:
+            args['login_error'] = "Пользователь не найден"
+            return render( request, 'auction_site/login.html', args)
     else:
-        args['login_error'] = "Пользователь не найден"
-        return render_to_response('auction_site/login.html', args)
+        return render( request, 'auction_site/login.html', args)
 
 
 def give_lots(request):
@@ -99,7 +134,6 @@ def lot_detail(request, pk):
     rate = Rate.objects.filter(lot__pk=pk)
     return render_to_response('auction_site/lot_detail.html', {'lot': lot,
 			'rate': rate, 'username': auth.get_user(request).username})
-
 
 
 def logout(request):

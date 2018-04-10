@@ -1,6 +1,6 @@
-{% extends 'lots.html' %}
+{% extends 'auction_site/lots.html' %}
 
-{% blosk login %}
+{% block login %}
     <div class="register">
         <form action="/register/" method="post">
             {% csrf_token %}

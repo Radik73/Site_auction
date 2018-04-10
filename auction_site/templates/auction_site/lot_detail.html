@@ -1,5 +1,4 @@
 <div class="lot">
-	
 	{% block content %}
 	{% if lot.start_date %}
 	<h1>{{ lot.title }}</h1>
@@ -10,7 +9,8 @@
 				{{ elem.user }}
 				{{ elem.sum_rate }}<br>
 			{% endfor %}
-			<a href="{% url 'make_rate' pk=lot.pk %}" class="top-menu">Сделать ставку</a>
+			<a href="{% url 'make_rate' pk=lot.pk %}" class="top-menu">Сделать ставку</a><br>
+			<a href="{% url 'my_rates' pk=lot.pk %}">Мои ставки</a>
 		</div>
 	{% endif %}
 	{% endblock %}

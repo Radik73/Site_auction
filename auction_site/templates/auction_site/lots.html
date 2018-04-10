@@ -7,9 +7,10 @@
 
     <body>
 	<div class="top-bar">
-		<ul><div class="label round secondary"><a href="/registration/">Регистрация</a></div></ul>
 		<section class="top-bar-section">
 			<ul class="right">
+				<a href="/register/">Регистрация</a><br>
+				<a href="/profile/">Профиль</a><br>
 				{% if username %}
 					<a href="/logout/">Выйти ({{ username }})</a>
 				{% else %}
